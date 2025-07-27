@@ -395,7 +395,10 @@
             // Update Large Fader - target the wrapper elements that control flex
             const faderTopWrapper = document.querySelector('.ActiveScreenLargeFader .FaderTopWrapper');
             const faderActiveWrapper = document.querySelector('.ActiveScreenLargeFader .FaderActiveWrapper');
-            const dbIndicator = document.querySelector('.ActiveScreenLargeFader .DbIndicator .4');
+            // The db indicator element uses a numeric class "4" which cannot be
+            // directly queried with a standard CSS class selector. Query it
+            // using an attribute selector instead to avoid a syntax error.
+            const dbIndicator = document.querySelector('.ActiveScreenLargeFader .DbIndicator [class="4"]');
             
             console.log('Elements found:', !!faderTopWrapper, !!faderActiveWrapper, !!dbIndicator);
             
