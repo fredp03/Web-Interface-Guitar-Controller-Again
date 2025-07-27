@@ -48,6 +48,32 @@
         margin-bottom: 20px;
       }
 
+      .fader-area-container {
+        position: relative;
+        height: 450px;
+        overflow: hidden;
+        margin-bottom: 20px;
+      }
+
+      .fader-area-container .fader-area {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        margin-bottom: 0 !important;
+      }
+
+      .ActiveScreenLargeFader {
+        transform: translateY(0);
+        display: flex !important;
+      }
+
+      .ActiveScreenFxMenu {
+        transform: translateY(100%);
+        display: flex !important;
+      }
+
       .header h1 {
         font-size: 24px;
         font-weight: 700;
@@ -344,22 +370,50 @@
           });
         });
 
-        // Screen toggle functionality
+        // Screen toggle functionality with AnimeJS animation
         const largeFaderScreen = document.querySelector('.ActiveScreenLargeFader');
         const fxMenuScreen = document.querySelector('.ActiveScreenFxMenu');
         const optionsIcons = document.querySelectorAll('.OptionsIcon');
+        let showingFxMenu = false;
+
+        function showFxMenu() {
+          anime({
+            targets: largeFaderScreen,
+            translateY: ['0%', '-100%'],
+            duration: 500,
+            easing: 'easeInOutQuad'
+          });
+          anime({
+            targets: fxMenuScreen,
+            translateY: ['100%', '0%'],
+            duration: 500,
+            easing: 'easeInOutQuad'
+          });
+          showingFxMenu = true;
+        }
+
+        function showLargeFader() {
+          anime({
+            targets: largeFaderScreen,
+            translateY: ['-100%', '0%'],
+            duration: 500,
+            easing: 'easeInOutQuad'
+          });
+          anime({
+            targets: fxMenuScreen,
+            translateY: ['0%', '100%'],
+            duration: 500,
+            easing: 'easeInOutQuad'
+          });
+          showingFxMenu = false;
+        }
 
         optionsIcons.forEach(icon => {
-          icon.addEventListener('click', function() {
-            // Toggle between screens
-            if (largeFaderScreen.style.display !== 'none') {
-              // Show FX Menu, hide Large Fader
-              largeFaderScreen.style.display = 'none';
-              fxMenuScreen.style.display = 'flex';
+          icon.addEventListener('click', () => {
+            if (showingFxMenu) {
+              showLargeFader();
             } else {
-              // Show Large Fader, hide FX Menu
-              fxMenuScreen.style.display = 'none';
-              largeFaderScreen.style.display = 'flex';
+              showFxMenu();
             }
           });
         });
@@ -1122,11 +1176,12 @@
         
         // Initialize button appearances
         const monitorButtons = document.querySelectorAll('.ButtonComponent');
-        monitorButtons.forEach(btn => {
-            updateButtonAppearance(btn, btn.classList.contains('selected'));
-        });
+      monitorButtons.forEach(btn => {
+          updateButtonAppearance(btn, btn.classList.contains('selected'));
+      });
       });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
   </head>
   <body>
     <div class="container">
@@ -1138,6 +1193,7 @@
         </div>
       </header>
       <main>
+        <div class="fader-area-container">
         <div data-layer="Active-Screen=Large Fader" class="ActiveScreenLargeFader fader-area" style="width: 100%; height: 450px; padding-left: 10px; padding-right: 10px; padding-top: 20px; padding-bottom: 20px; background: #D4CBC4; box-shadow: inset 1px 1px 3px #908a85e6, inset -1px -1px 2px #ffffffe6, inset 1px -1px 2px #908a8533, inset -1px 1px 2px #908a8533, -1px -1px 2px #908a8580, 1px 1px 2px #ffffff4c; border-radius: 29px; flex-direction: column; justify-content: center; align-items: center; gap: 12px; display: flex; margin-bottom: 20px;">
           <div data-layer="dB Reading" class="DbReading" style="align-self: stretch; height: 48px; overflow: hidden; justify-content: flex-start; align-items: flex-start; display: inline-flex">
             <div data-layer="Spacer" class="Spacer" style="flex: 1 1 0; align-self: stretch; padding: 10px"></div>
@@ -1356,7 +1412,9 @@
             </div>
           </div>
         </div>
-        
+        </div>
+        </div>
+
         <div class="available-tracks">
           <div class="track selected" role="button" aria-label="Guitar 1">
             <div class="track-name">Guitar 1</div>
