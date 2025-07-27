@@ -250,6 +250,9 @@
         width: 100%;
         height: 100%;
         margin-bottom: 0 !important;
+        will-change: transform;
+        backface-visibility: hidden;
+        transform: translateZ(0);
       }
 
       .ActiveScreenFxMenu {
@@ -376,20 +379,24 @@
         // Ensure both screens are visible for animation
         largeFaderScreen.style.display = 'flex';
         fxMenuScreen.style.display = 'flex';
+        anime.set([largeFaderScreen, fxMenuScreen], { translateZ: 0 });
         anime.set(largeFaderScreen, { translateY: '0%' });
         anime.set(fxMenuScreen, { translateY: '100%' });
 
+        function toggleScreens() {
+          const tl = anime.timeline({ duration: 500, easing: 'easeInOutQuart' });
+          if (!showingFxMenu) {
+            tl.add({ targets: largeFaderScreen, translateY: '-100%' }, 0)
+              .add({ targets: fxMenuScreen, translateY: '0%' }, 0);
+          } else {
+            tl.add({ targets: largeFaderScreen, translateY: '0%' }, 0)
+              .add({ targets: fxMenuScreen, translateY: '100%' }, 0);
+          }
+          showingFxMenu = !showingFxMenu;
+        }
+
         optionsIcons.forEach(icon => {
-          icon.addEventListener('click', function() {
-            if (!showingFxMenu) {
-              anime({ targets: largeFaderScreen, translateY: '-100%', duration: 500, easing: 'easeInOutQuad' });
-              anime({ targets: fxMenuScreen, translateY: '0%', duration: 500, easing: 'easeInOutQuad' });
-            } else {
-              anime({ targets: largeFaderScreen, translateY: '0%', duration: 500, easing: 'easeInOutQuad' });
-              anime({ targets: fxMenuScreen, translateY: '100%', duration: 500, easing: 'easeInOutQuad' });
-            }
-            showingFxMenu = !showingFxMenu;
-          });
+          icon.addEventListener('click', toggleScreens);
         });
 
         // Fader functionality - adapted from working audio mixer
